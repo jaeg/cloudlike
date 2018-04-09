@@ -11,9 +11,9 @@ import (
 )
 
 // RenderSystem .
-func RenderSystem(entities *[]*entity.Entity, levels *[]world.Level) {
+func RenderSystem(entities []entity.Entity, levels *[]world.Level) {
 	fmt.Println(entities)
-	for _, entity := range *entities {
+	for _, entity := range entities {
 		fmt.Println(entity)
 		if entity.HasComponent("WebSocketComponent") {
 			// Look up level by id

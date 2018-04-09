@@ -15,14 +15,14 @@ import (
 const port = "1234"
 
 func main() {
-	entities := []*entity.Entity{}
+	entities := []entity.Entity{}
 	levels := []world.Level{}
 	levels = append(levels, *world.NewOverworldSection(16, 16))
 
 	ticker := time.NewTicker(time.Second / 4)
 	go func() {
 		for _ = range ticker.C {
-			system.RenderSystem(&entities, &levels)
+			system.RenderSystem(entities, &levels)
 		}
 
 	}()

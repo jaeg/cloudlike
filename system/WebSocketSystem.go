@@ -11,14 +11,14 @@ import (
 
 // WebSocketSystem This system handles websockets for the game.
 type WebSocketSystem struct {
-	Entities *[]*entity.Entity
+	Entities *[]entity.Entity
 }
 
 //HandleSocket Handles player input from the client and puts data into a component to be handled during the turn loop
 func (wSS *WebSocketSystem) HandleSocket(ws *websocket.Conn) {
 	// Create player since this is a new connection
 	fmt.Println("New client connected.")
-	newPlayerEntity := &entity.Entity{}
+	newPlayerEntity := entity.Entity{}
 	webSocketComponent := &component.WebSocketComponent{Ws: ws}
 	newPlayerEntity.AddComponent(webSocketComponent)
 	positionComponent := &component.PositionComponent{X: 0, Y: 0, Level: 0}
@@ -51,6 +51,6 @@ func (wSS *WebSocketSystem) HandleSocket(ws *websocket.Conn) {
 			webSocketComponent.Command = command
 		}
 
-		fmt.Println(*(newPlayerEntity.Components[0]))
+		fmt.Println(newPlayerEntity.Components[0])
 	}
 }
