@@ -4,8 +4,9 @@ import "golang.org/x/net/websocket"
 
 // WebSocketComponent - Handles websocket communications
 type WebSocketComponent struct {
-	Ws      *websocket.Conn
-	Command map[string]interface{}
+	ViewWidth, ViewHeight int
+	Ws                    *websocket.Conn
+	Command               map[string]interface{}
 }
 
 //GetType get the type

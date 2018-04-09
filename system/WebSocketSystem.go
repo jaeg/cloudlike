@@ -9,9 +9,9 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-// WebSocketSystem .
+// WebSocketSystem This system handles websockets for the game.
 type WebSocketSystem struct {
-	Entities *[]entity.Entity
+	Entities *[]*entity.Entity
 }
 
 //HandleSocket Handles player input from the client and puts data into a component to be handled during the turn loop
@@ -21,6 +21,9 @@ func (wSS *WebSocketSystem) HandleSocket(ws *websocket.Conn) {
 	newPlayerEntity := &entity.Entity{}
 	webSocketComponent := &component.WebSocketComponent{Ws: ws}
 	newPlayerEntity.AddComponent(webSocketComponent)
+	positionComponent := &component.PositionComponent{X: 0, Y: 0, Level: 0}
+	newPlayerEntity.AddComponent(positionComponent)
+	*wSS.Entities = append(*wSS.Entities, newPlayerEntity)
 	fmt.Println(newPlayerEntity)
 
 	var err error
@@ -40,7 +43,14 @@ func (wSS *WebSocketSystem) HandleSocket(ws *websocket.Conn) {
 			continue
 		}
 
-		webSocketComponent.Command = command
+		switch command["type"] {
+		case "viewSize":
+			webSocketComponent.ViewWidth = int(command["width"].(float64))
+			webSocketComponent.ViewHeight = int(command["height"].(float64))
+		default:
+			webSocketComponent.Command = command
+		}
+
 		fmt.Println(*(newPlayerEntity.Components[0]))
 	}
 }
