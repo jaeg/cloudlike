@@ -9,31 +9,21 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-// WebSocketSystem This system handles websockets for the game.
-type WebSocketSystem struct {
-	Entities *[]entity.Entity
-}
-
 //HandleSocket Handles player input from the client and puts data into a component to be handled during the turn loop
-func (wSS *WebSocketSystem) HandleSocket(ws *websocket.Conn) {
-	// Create player since this is a new connection
-	fmt.Println("New client connected.")
-	newPlayerEntity := entity.Entity{}
-	webSocketComponent := &component.WebSocketComponent{Ws: ws}
-	newPlayerEntity.AddComponent(webSocketComponent)
-	positionComponent := &component.PositionComponent{X: 0, Y: 0, Level: 0}
-	newPlayerEntity.AddComponent(positionComponent)
-	*wSS.Entities = append(*wSS.Entities, newPlayerEntity)
-	fmt.Println(newPlayerEntity)
-
+func WebSocketSystem(entity entity.Entity, ws *websocket.Conn) {
 	var err error
+	if !entity.HasComponent("WebSocketComponent") {
+		return
+	}
 
+	webSocketComponent := entity.GetComponent("WebSocketComponent").(*component.WebSocketComponent)
 	// Message loop
 	for {
 		var reply string
 
 		if err = websocket.Message.Receive(ws, &reply); err != nil {
 			fmt.Printf("Socket Error: %v \n", err)
+			webSocketComponent.Ws = nil
 			break
 		}
 
@@ -42,6 +32,7 @@ func (wSS *WebSocketSystem) HandleSocket(ws *websocket.Conn) {
 			fmt.Println("Issue unmarshaling " + reply)
 			continue
 		}
+		fmt.Println(command)
 
 		switch command["type"] {
 		case "viewSize":
@@ -50,7 +41,5 @@ func (wSS *WebSocketSystem) HandleSocket(ws *websocket.Conn) {
 		default:
 			webSocketComponent.Command = command
 		}
-
-		fmt.Println(newPlayerEntity.Components[0])
 	}
 }
