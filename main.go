@@ -15,18 +15,21 @@ import (
 
 const port = "1234"
 
-var entities []entity.Entity
-var levels []world.Level
+var entities []*entity.Entity
+var levels []*world.Level
 
 func main() {
-	entities = []entity.Entity{}
-	levels = []world.Level{}
-	levels = append(levels, *world.NewOverworldSection(16, 16))
+	entities = []*entity.Entity{}
+	levels = []*world.Level{}
+	levels = append(levels, world.NewOverworldSection(16, 16))
 
 	ticker := time.NewTicker(time.Second / 4)
 	go func() {
 		for _ = range ticker.C {
-			system.RenderSystem(entities, &levels)
+			system.InitiativeSystem(entities, levels)
+			system.PlayerSystem(entities, levels)
+			system.RenderSystem(entities, levels)
+			system.CleanUpSystem(entities, levels)
 		}
 
 	}()
@@ -46,11 +49,13 @@ func HandleSocket(ws *websocket.Conn) {
 	// Create player since this is a new connection
 	fmt.Println("New client connected.")
 	newPlayerEntity := entity.Entity{}
-	webSocketComponent := &component.WebSocketComponent{Ws: ws}
-	newPlayerEntity.AddComponent(webSocketComponent)
+	playerComponent := &component.PlayerComponent{Ws: ws}
+	newPlayerEntity.AddComponent(playerComponent)
+	initiativeComponent := &component.InitiativeComponent{DefaultValue: 10, Ticks: 10}
+	newPlayerEntity.AddComponent(initiativeComponent)
 	positionComponent := &component.PositionComponent{X: 0, Y: 0, Level: 0}
 	newPlayerEntity.AddComponent(positionComponent)
-	entities = append(entities, newPlayerEntity)
+	entities = append(entities, &newPlayerEntity)
 
 	fmt.Println("Entities handle sock:", entities)
 	system.WebSocketSystem(newPlayerEntity, ws)

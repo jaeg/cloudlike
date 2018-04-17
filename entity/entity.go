@@ -12,7 +12,7 @@ type Entity struct {
 
 func (entity *Entity) AddComponent(component component.Component) {
 	entity.Components = append(entity.Components, component)
-	fmt.Println(entity)
+	fmt.Println(entity.Components)
 }
 
 func (entity *Entity) HasComponent(name string) bool {

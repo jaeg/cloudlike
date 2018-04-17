@@ -12,18 +12,18 @@ import (
 //HandleSocket Handles player input from the client and puts data into a component to be handled during the turn loop
 func WebSocketSystem(entity entity.Entity, ws *websocket.Conn) {
 	var err error
-	if !entity.HasComponent("WebSocketComponent") {
+	if !entity.HasComponent("PlayerComponent") {
 		return
 	}
 
-	webSocketComponent := entity.GetComponent("WebSocketComponent").(*component.WebSocketComponent)
+	playerComponent := entity.GetComponent("PlayerComponent").(*component.PlayerComponent)
 	// Message loop
 	for {
 		var reply string
 
 		if err = websocket.Message.Receive(ws, &reply); err != nil {
 			fmt.Printf("Socket Error: %v \n", err)
-			webSocketComponent.Ws = nil
+			playerComponent.Ws = nil
 			break
 		}
 
@@ -36,10 +36,10 @@ func WebSocketSystem(entity entity.Entity, ws *websocket.Conn) {
 
 		switch command["type"] {
 		case "viewSize":
-			webSocketComponent.ViewWidth = int(command["width"].(float64))
-			webSocketComponent.ViewHeight = int(command["height"].(float64))
+			playerComponent.ViewWidth = int(command["width"].(float64))
+			playerComponent.ViewHeight = int(command["height"].(float64))
 		default:
-			webSocketComponent.Command = command
+			playerComponent.Command = command
 		}
 	}
 }

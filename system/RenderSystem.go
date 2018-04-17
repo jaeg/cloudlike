@@ -11,16 +11,16 @@ import (
 )
 
 // RenderSystem .
-func RenderSystem(entities []entity.Entity, levels *[]world.Level) {
+func RenderSystem(entities []*entity.Entity, levels []*world.Level) {
 	for _, entity := range entities {
-		if entity.HasComponent("WebSocketComponent") {
+		if entity.HasComponent("PlayerComponent") {
 			// Look up level by id
 			// Construct view of
-			wsc := entity.GetComponent("WebSocketComponent").(*component.WebSocketComponent)
+			wsc := entity.GetComponent("PlayerComponent").(*component.PlayerComponent)
 			viewWidth := wsc.ViewWidth
 			viewHeight := wsc.ViewHeight
 			positionComponent := entity.GetComponent("PositionComponent").(*component.PositionComponent)
-			onLevel := (*levels)[positionComponent.Level]
+			onLevel := levels[positionComponent.Level]
 
 			view := onLevel.GetView(positionComponent.X, positionComponent.Y, viewWidth, viewHeight, false)
 			viewJSONBytes, _ := json.Marshal(view)
