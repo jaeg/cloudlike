@@ -29,6 +29,7 @@ func main() {
 			system.InitiativeSystem(entities, levels)
 			system.PlayerSystem(entities, levels)
 			system.RenderSystem(entities, levels)
+			system.StatusConditionSystem(entities, levels)
 			system.CleanUpSystem(entities, levels)
 		}
 
@@ -51,6 +52,9 @@ func HandleSocket(ws *websocket.Conn) {
 	newPlayerEntity := entity.Entity{}
 	playerComponent := &component.PlayerComponent{Ws: ws}
 	newPlayerEntity.AddComponent(playerComponent)
+
+	poison := &component.PoisonedComponent{Duration: 5}
+	newPlayerEntity.AddComponent(poison)
 	initiativeComponent := &component.InitiativeComponent{DefaultValue: 10, Ticks: 10}
 	newPlayerEntity.AddComponent(initiativeComponent)
 	positionComponent := &component.PositionComponent{X: 0, Y: 0, Level: 0}
