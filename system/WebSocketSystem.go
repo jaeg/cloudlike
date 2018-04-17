@@ -32,14 +32,13 @@ func WebSocketSystem(entity entity.Entity, ws *websocket.Conn) {
 			fmt.Println("Issue unmarshaling " + reply)
 			continue
 		}
-		fmt.Println(command)
 
 		switch command["type"] {
 		case "viewSize":
 			playerComponent.ViewWidth = int(command["width"].(float64))
 			playerComponent.ViewHeight = int(command["height"].(float64))
-		default:
-			playerComponent.Command = command
+		case "input":
+			playerComponent.PushCommand(command["key"].(string))
 		}
 	}
 }

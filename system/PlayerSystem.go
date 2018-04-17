@@ -14,7 +14,25 @@ func PlayerSystem(entities []*entity.Entity, levels []*world.Level) {
 			if entity.HasComponent("MyTurnComponent") {
 				fmt.Println("It's a player's turn!")
 				pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
-				pc.X++
+				playerComponent := entity.GetComponent("PlayerComponent").(*component.PlayerComponent)
+				command := playerComponent.PopCommand()
+				switch command {
+				case "W":
+					pc.Y--
+				case "S":
+					pc.Y++
+				case "A":
+					pc.X--
+				case "D":
+					pc.X++
+				case "F":
+					direction := playerComponent.PopCommand()
+					if direction == "" {
+						fmt.Println("Wasn't given a direction to shoot!")
+					} else {
+						fmt.Println("Shoot in the " + direction + " direction!")
+					}
+				}
 			}
 		}
 	}

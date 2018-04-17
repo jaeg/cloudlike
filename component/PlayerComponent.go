@@ -6,10 +6,23 @@ import "golang.org/x/net/websocket"
 type PlayerComponent struct {
 	ViewWidth, ViewHeight int
 	Ws                    *websocket.Conn
-	Command               map[string]interface{}
+	Commands              []string
 }
 
 //GetType get the type
 func (PlayerComponent) GetType() string {
 	return "PlayerComponent"
+}
+
+func (pc *PlayerComponent) PushCommand(x string) {
+	pc.Commands = append(pc.Commands, x)
+}
+
+func (pc *PlayerComponent) PopCommand() string {
+	x := ""
+	if len(pc.Commands) > 0 {
+		x, pc.Commands = pc.Commands[0], pc.Commands[1:]
+	}
+
+	return x
 }
