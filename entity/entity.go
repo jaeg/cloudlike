@@ -2,44 +2,41 @@ package entity
 
 import (
 	"cloudlike/component"
-	"fmt"
 )
 
 // Entity .
 type Entity struct {
-	Components []component.Component
+	Components map[string]component.Component
 }
 
-func (entity *Entity) AddComponent(component component.Component) {
-	entity.Components = append(entity.Components, component)
-	fmt.Println(entity.Components)
+func (entity *Entity) AddComponent(c component.Component) {
+	if entity.Components == nil {
+		entity.Components = make(map[string]component.Component)
+	}
+
+	entity.Components[c.GetType()] = c
 }
 
 func (entity *Entity) HasComponent(name string) bool {
-	for _, component := range entity.Components {
-		if (component).GetType() == name {
-			return true
-		}
+	if entity.Components == nil {
+		entity.Components = make(map[string]component.Component)
 	}
-	return false
+
+	return entity.Components[name] != nil
 }
 
 func (entity *Entity) GetComponent(name string) component.Component {
-	for _, component := range entity.Components {
-		if component.GetType() == name {
-			return component
-		}
+	if entity.Components == nil {
+		entity.Components = make(map[string]component.Component)
 	}
-	return nil
+
+	return entity.Components[name]
 }
 
 func (entity *Entity) RemoveComponent(name string) {
-	for i, component := range entity.Components {
-		if component.GetType() == name {
-			copy(entity.Components[i:], entity.Components[i+1:])
-			entity.Components[len(entity.Components)-1] = nil // or the zero value of T
-			entity.Components = entity.Components[:len(entity.Components)-1]
-		}
+	if entity.Components == nil {
+		entity.Components = make(map[string]component.Component)
 	}
 
+	entity.Components[name] = nil
 }
