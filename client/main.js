@@ -4,7 +4,7 @@ var ctx=c.getContext("2d");
 var sock = null;
 var wsuri = "ws://127.0.0.1:1234";
 
-var tileWidth = 16;
+var tileWidth = 8;
 var tileHeight = 16;
 
 var tileMultiplier = 2;
@@ -87,8 +87,8 @@ var draw = function() {
       var x = coords.x
       var y = coords.y
       ctx.fillStyle = "red";
-      //ctx.textBaseline='center';
-      ctx.font = '32px serif';
+      ctx.textBaseline='middle';
+      ctx.font = '32px Courier New';
       ctx.fillText(entity.Character,x,y);
       //ctx.fillRect(x,y,tileWidth*tileMultiplier,tileHeight*tileMultiplier);
 
