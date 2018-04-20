@@ -10,8 +10,28 @@ import (
 	"golang.org/x/net/websocket"
 )
 
+type entityView struct {
+	X, Y      int
+	Character string
+}
+
 // RenderSystem .
 func RenderSystem(entities []*entity.Entity, levels []*world.Level) {
+
+	var seeableEntities []entityView
+	for _, entity := range entities {
+		if entity.HasComponent("AppearanceComponent") {
+			ac := entity.GetComponent("AppearanceComponent").(*component.AppearanceComponent)
+			pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
+			ev := entityView{X: pc.X, Y: pc.Y, Character: ac.Character}
+			seeableEntities = append(seeableEntities, ev)
+		}
+	}
+
+	viewJSONBytes, _ := json.Marshal(seeableEntities)
+	n := len(viewJSONBytes)
+	entitiesJSON := string(viewJSONBytes[:n])
+
 	for _, entity := range entities {
 		if entity.HasComponent("PlayerComponent") {
 			// Look up level by id
@@ -26,13 +46,24 @@ func RenderSystem(entities []*entity.Entity, levels []*world.Level) {
 			viewJSONBytes, _ := json.Marshal(view)
 			n := len(viewJSONBytes)
 			viewJSON := string(viewJSONBytes[:n])
+
+			playerJSONBytes, _ := json.Marshal(positionComponent)
+			n = len(playerJSONBytes)
+			playerJSON := string(playerJSONBytes[:n])
+
 			if wsc.Ws != nil {
 				if err := websocket.Message.Send(wsc.Ws, "view:"+viewJSON); err != nil {
-					fmt.Printf("Can't send to player %v\n", entity)
+					fmt.Printf("Can't send view to player %v\n", entity)
+				}
+
+				if err := websocket.Message.Send(wsc.Ws, "entities:"+entitiesJSON); err != nil {
+					fmt.Printf("Can't send entities to player %v\n", entity)
+				}
+
+				if err := websocket.Message.Send(wsc.Ws, "player:"+playerJSON); err != nil {
+					fmt.Printf("Can't send player to player %v\n", entity)
 				}
 			}
-
-			//fmt.Println(viewJSON)
 		}
 	}
 }

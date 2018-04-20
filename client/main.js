@@ -5,7 +5,7 @@ var sock = null;
 var wsuri = "ws://127.0.0.1:1234";
 
 var tileWidth = 16;
-var tileHeight = 24;
+var tileHeight = 16;
 
 var tileMultiplier = 2;
 
@@ -22,8 +22,10 @@ sock.onclose = function(e) {
     sock = null
 }
 drawBuffer = []
+entities = []
+player = {}
 sock.onmessage = function(e) {
-    console.log(e.data);
+
     var payload = e.data;
     var index = payload.indexOf(":");
     var type = payload.substr(0,index);
@@ -32,6 +34,14 @@ sock.onmessage = function(e) {
     var data = JSON.parse(json)
     if (type == "view") {
       drawBuffer = data
+    }
+
+    if (type == "entities") {
+      entities = data
+    }
+
+    if (type == "player") {
+      player = data
     }
 }
 
@@ -61,11 +71,39 @@ var draw = function() {
             ctx.fillStyle = "green";
           if (tileType === 2)
             ctx.fillStyle = "blue";
+
           ctx.fillRect(x*tileWidth*tileMultiplier,y*tileHeight*tileMultiplier,tileWidth*tileMultiplier,tileHeight*tileMultiplier);
         }
       }
     }
   }
+
+
+  if (entities != null) {
+    for (var i = 0; i < entities.length; i++) {
+      entity = entities[i]
+      coords = toCanvasCoords(entity.X, entity.Y)
+
+      var x = coords.x
+      var y = coords.y
+      ctx.fillStyle = "red";
+      //ctx.textBaseline='center';
+      ctx.font = '32px serif';
+      ctx.fillText(entity.Character,x,y);
+      //ctx.fillRect(x,y,tileWidth*tileMultiplier,tileHeight*tileMultiplier);
+
+    }
+  }
+}
+
+function toCanvasCoords(x,y) {
+  if (player != null) {
+    var coords = {x:null, y:null};
+    coords.x = c.width/2 + (x - player.X)*tileWidth*tileMultiplier
+    coords.y = c.height/2 + (y - player.Y)*tileHeight*tileMultiplier
+    return coords;
+  }
+  return null;
 }
 
 //Render stuff

@@ -30,7 +30,7 @@ func main() {
 			system.PlayerSystem(entities, levels)
 			system.RenderSystem(entities, levels)
 			system.StatusConditionSystem(entities, levels)
-			system.CleanUpSystem(entities, levels)
+			entities, levels = system.CleanUpSystem(entities, levels)
 		}
 
 	}()
@@ -59,6 +59,7 @@ func HandleSocket(ws *websocket.Conn) {
 	newPlayerEntity.AddComponent(initiativeComponent)
 	positionComponent := &component.PositionComponent{X: 0, Y: 0, Level: 0}
 	newPlayerEntity.AddComponent(positionComponent)
+	newPlayerEntity.AddComponent(&component.AppearanceComponent{Character: "@"})
 	entities = append(entities, &newPlayerEntity)
 
 	fmt.Println("Entities handle sock:", entities)
