@@ -11,8 +11,10 @@ import (
 )
 
 type entityView struct {
-	X, Y      int
-	Character string
+	X, Y        int
+	SpriteIndex int
+	Resource    string
+	Direction   int
 }
 
 // RenderSystem .
@@ -23,7 +25,12 @@ func RenderSystem(entities []*entity.Entity, levels []*world.Level) {
 		if entity.HasComponent("AppearanceComponent") {
 			ac := entity.GetComponent("AppearanceComponent").(*component.AppearanceComponent)
 			pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
-			ev := entityView{X: pc.X, Y: pc.Y, Character: ac.Character}
+			direction := -1
+			if entity.HasComponent("DirectionComponent") {
+				dc := entity.GetComponent("DirectionComponent").(*component.DirectionComponent)
+				direction = dc.Direction
+			}
+			ev := entityView{X: pc.X, Y: pc.Y, SpriteIndex: ac.SpriteIndex, Resource: ac.Resource, Direction: direction}
 			seeableEntities = append(seeableEntities, ev)
 		}
 	}

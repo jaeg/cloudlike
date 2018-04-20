@@ -4,7 +4,7 @@ var ctx=c.getContext("2d");
 var sock = null;
 var wsuri = "ws://127.0.0.1:1234";
 
-var tileWidth = 8;
+var tileWidth = 16;
 var tileHeight = 16;
 
 var tileMultiplier = 2;
@@ -21,6 +21,7 @@ sock.onclose = function(e) {
     console.log("connection closed (" + e.code + ")");
     sock = null
 }
+flip = false
 drawBuffer = []
 entities = []
 player = {}
@@ -42,6 +43,7 @@ sock.onmessage = function(e) {
 
     if (type == "player") {
       player = data
+      flip = !flip;
     }
 }
 
@@ -66,13 +68,9 @@ var draw = function() {
           ctx.fillStyle = "black"
           ctx.fillRect(x*tileWidth*tileMultiplier,y*tileHeight*tileMultiplier,tileWidth*tileMultiplier,tileHeight*tileMultiplier);
         } else {
-          var tileType = drawBuffer[x][y].TileType
-          if (tileType === 1)
-            ctx.fillStyle = "green";
-          if (tileType === 2)
-            ctx.fillStyle = "blue";
-
-          ctx.fillRect(x*tileWidth*tileMultiplier,y*tileHeight*tileMultiplier,tileWidth*tileMultiplier,tileHeight*tileMultiplier);
+          var spriteIndex = drawBuffer[x][y].SpriteIndex
+          var tile = getTileLocation(spriteIndex, 16)
+          drawTile(x*tileWidth*tileMultiplier,y*tileHeight*tileMultiplier,tileWidth,tileHeight,"terrain", tile.X,tile.Y, tileWidth,tileHeight);
         }
       }
     }
@@ -86,29 +84,59 @@ var draw = function() {
 
       var x = coords.x
       var y = coords.y
-      ctx.fillStyle = "red";
-      ctx.textBaseline='middle';
-      ctx.font = '32px Courier New';
-      ctx.fillText(entity.Character,x,y);
-      //ctx.fillRect(x,y,tileWidth*tileMultiplier,tileHeight*tileMultiplier);
-
+      var tile = {}
+      if (entity.Direction > -1) {
+        tile = getTileLocation(entity.SpriteIndex + entity.Direction, 16, true)
+      } else {
+        tile = getTileLocation(entity.SpriteIndex, 16, true)
+      }
+      ctx.fillRect(x,y,tileWidth*tileMultiplier,tileHeight*tileMultiplier);
+      drawTile(x, y, tileWidth, tileHeight, entity.Resource, tile.X, tile.Y, tileWidth, tileHeight);
     }
   }
+}
+
+function drawTile(x,y, width, height, image, subx,suby, subwidth, subheight, r,g,b) {
+  img = resourceManager.getResource(image);
+  if (img != null)
+    ctx.drawImage(img, subx * subwidth, suby * subheight, subwidth, subheight, x, y, width * tileMultiplier, height * tileMultiplier);
 }
 
 function toCanvasCoords(x,y) {
   if (player != null) {
     var coords = {x:null, y:null};
-    coords.x = c.width/2 + (x - player.X)*tileWidth*tileMultiplier
-    coords.y = c.height/2 + (y - player.Y)*tileHeight*tileMultiplier
+    coords.x = c.width/2 + (x - player.X) * tileWidth * tileMultiplier
+    coords.y = c.height/2 + (y - player.Y) * tileHeight * tileMultiplier
     return coords;
   }
   return null;
 }
+
+function getTileLocation(index, numberAcross, useFlip) {
+  var tile = {};
+
+  if (useFlip) {
+    if (flip) {
+      index += numberAcross
+    }
+  }
+  //figure out tile location
+  tile.X = index;
+  tile.Y = 0;
+  while (tile.X > numberAcross-1) {
+    tile.X -= numberAcross;
+    tile.Y++;
+  }
+
+  return tile;
+}
+
+
+resourceManager = new ResourceManager();
+resourceManager.loadResources({terrain:"assets/space/tiny_galaxy_world.png", item:"assets/space/tiny_galaxy_items.png", npc:"assets/space/tiny_galaxy_monsters.png", fx: "assets/space/tiny_galaxy_fx.png"}, step)
 
 //Render stuff
 function step() {
   draw();
   window.requestAnimationFrame(step);
 }
-window.requestAnimationFrame(step);

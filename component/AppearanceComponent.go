@@ -2,7 +2,8 @@ package component
 
 // MyTurnComponent .
 type AppearanceComponent struct {
-	Character string
+	SpriteIndex int
+	Resource    string
 }
 
 func (pc AppearanceComponent) GetType() string {

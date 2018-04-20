@@ -30,7 +30,7 @@ func newLevel(width int, height int) (level *Level) {
 	for x := 0; x < width; x++ {
 		col := []Tile{}
 		for y := 0; y < height; y++ {
-			col = append(col, Tile{TileType: 1, SpriteIndex: -1, solid: false})
+			col = append(col, Tile{TileType: 1, SpriteIndex: 112, solid: false})
 		}
 		data[x] = append(data[x], col...)
 	}
@@ -46,8 +46,10 @@ func NewOverworldSection(width int, height int) (level *Level) {
 		for y := 0; y < height; y++ {
 			if rand.Intn(2) == 0 {
 				level.getTileAt(x, y).TileType = 1
+				level.getTileAt(x, y).SpriteIndex = 112
 			} else {
 				level.getTileAt(x, y).TileType = 2
+				level.getTileAt(x, y).SpriteIndex = 96
 			}
 		}
 	}

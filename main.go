@@ -59,7 +59,8 @@ func HandleSocket(ws *websocket.Conn) {
 	newPlayerEntity.AddComponent(initiativeComponent)
 	positionComponent := &component.PositionComponent{X: 0, Y: 0, Level: 0}
 	newPlayerEntity.AddComponent(positionComponent)
-	newPlayerEntity.AddComponent(&component.AppearanceComponent{Character: "@"})
+	newPlayerEntity.AddComponent(&component.AppearanceComponent{SpriteIndex: 0, Resource: "npc"})
+	newPlayerEntity.AddComponent(&component.DirectionComponent{Direction: 0})
 	entities = append(entities, &newPlayerEntity)
 
 	fmt.Println("Entities handle sock:", entities)
