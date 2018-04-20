@@ -3,6 +3,7 @@ package system
 import (
 	"cloudlike/entity"
 	"cloudlike/world"
+	"fmt"
 )
 
 // CleanUpSystem .
@@ -14,6 +15,7 @@ func CleanUpSystem(entities []*entity.Entity, levels []*world.Level) ([]*entity.
 
 		if entity.HasComponent("DeadComponent") {
 			entities = append(entities[:i], entities[i+1:]...)
+			fmt.Println("Killed")
 		}
 
 	}

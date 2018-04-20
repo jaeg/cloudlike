@@ -41,4 +41,6 @@ func WebSocketSystem(entity entity.Entity, ws *websocket.Conn) {
 			playerComponent.PushCommand(command["key"].(string))
 		}
 	}
+
+	entity.AddComponent(component.DeadComponent{})
 }
