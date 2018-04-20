@@ -109,7 +109,6 @@ var draw = function() {
       } else {
         tile = getTileLocation(entity.SpriteIndex, 16, true)
       }
-      ctx.fillRect(x,y,tileWidth*tileMultiplier,tileHeight*tileMultiplier);
       drawTile(x, y, tileWidth, tileHeight, entity.Resource, tile.X, tile.Y, tileWidth, tileHeight);
     }
   }

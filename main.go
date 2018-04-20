@@ -55,7 +55,7 @@ func HandleSocket(ws *websocket.Conn) {
 
 	poison := &component.PoisonedComponent{Duration: 5}
 	newPlayerEntity.AddComponent(poison)
-	initiativeComponent := &component.InitiativeComponent{DefaultValue: 10, Ticks: 10}
+	initiativeComponent := &component.InitiativeComponent{DefaultValue: 1, Ticks: 1}
 	newPlayerEntity.AddComponent(initiativeComponent)
 	positionComponent := &component.PositionComponent{X: 0, Y: 0, Level: 0}
 	newPlayerEntity.AddComponent(positionComponent)
