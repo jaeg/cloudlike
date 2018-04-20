@@ -25,6 +25,7 @@ flip = false
 drawBuffer = []
 entities = []
 player = {}
+
 sock.onmessage = function(e) {
 
     var payload = e.data;
@@ -44,6 +45,24 @@ sock.onmessage = function(e) {
     if (type == "player") {
       player = data
       flip = !flip;
+    }
+
+    if (type == "commandQueue") {
+      document.getElementById("commandQueue").innerHTML = data
+    }
+
+    if (type == "messageLog") {
+      if (data != null) {
+        document.getElementById("messageLog").innerHTML = ""
+        //Only show the last 10 messages
+        var start = data.length - 10
+        if (start < 0) {
+          start = 0
+        }
+        for (var i = start; i < data.length; i++){
+          document.getElementById("messageLog").innerHTML += data[i] + "</br>";
+        }
+      }
     }
 }
 

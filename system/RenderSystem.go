@@ -58,6 +58,14 @@ func RenderSystem(entities []*entity.Entity, levels []*world.Level) {
 			n = len(playerJSONBytes)
 			playerJSON := string(playerJSONBytes[:n])
 
+			playerCommandQueueBytes, _ := json.Marshal(wsc.Commands)
+			n = len(playerCommandQueueBytes)
+			playerCommandQueueJSON := string(playerCommandQueueBytes[:n])
+
+			playerMessageLogBytes, _ := json.Marshal(wsc.MessageLog)
+			n = len(playerMessageLogBytes)
+			playerMessageLogJSON := string(playerMessageLogBytes[:n])
+
 			if wsc.Ws != nil {
 				if err := websocket.Message.Send(wsc.Ws, "view:"+viewJSON); err != nil {
 					fmt.Printf("Can't send view to player %v\n", entity)
@@ -69,6 +77,14 @@ func RenderSystem(entities []*entity.Entity, levels []*world.Level) {
 
 				if err := websocket.Message.Send(wsc.Ws, "player:"+playerJSON); err != nil {
 					fmt.Printf("Can't send player to player %v\n", entity)
+				}
+
+				if err := websocket.Message.Send(wsc.Ws, "commandQueue:"+playerCommandQueueJSON); err != nil {
+					fmt.Printf("Can't send command queue to player %v\n", entity)
+				}
+
+				if err := websocket.Message.Send(wsc.Ws, "messageLog:"+playerMessageLogJSON); err != nil {
+					fmt.Printf("Can't send command queue to player %v\n", entity)
 				}
 			}
 		}

@@ -4,7 +4,6 @@ import (
 	"cloudlike/component"
 	"cloudlike/entity"
 	"cloudlike/world"
-	"fmt"
 )
 
 var statusConditions = []string{"Poisoned"}
@@ -18,7 +17,10 @@ func StatusConditionSystem(entities []*entity.Entity, levels []*world.Level) {
 
 				if pc.Decay() {
 					entity.RemoveComponent(statusCondition + "Component")
-					fmt.Println(statusCondition + " has cleared!")
+					if entity.HasComponent("PlayerComponent") {
+						playerComponent := entity.GetComponent("PlayerComponent").(*component.PlayerComponent)
+						playerComponent.AddMessage(statusCondition + " has cleared!")
+					}
 				}
 			}
 		}

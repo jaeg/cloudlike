@@ -7,6 +7,7 @@ type PlayerComponent struct {
 	ViewWidth, ViewHeight int
 	Ws                    *websocket.Conn
 	Commands              []string
+	MessageLog            []string
 }
 
 //GetType get the type
@@ -16,6 +17,10 @@ func (PlayerComponent) GetType() string {
 
 func (pc *PlayerComponent) PushCommand(x string) {
 	pc.Commands = append(pc.Commands, x)
+}
+
+func (pc *PlayerComponent) AddMessage(x string) {
+	pc.MessageLog = append(pc.MessageLog, x)
 }
 
 func (pc *PlayerComponent) PopCommand() string {

@@ -4,7 +4,6 @@ import (
 	"cloudlike/component"
 	"cloudlike/entity"
 	"cloudlike/world"
-	"fmt"
 )
 
 // PlayerSystem .
@@ -32,9 +31,9 @@ func PlayerSystem(entities []*entity.Entity, levels []*world.Level) {
 				case "F":
 					direction := playerComponent.PopCommand()
 					if direction == "" {
-						fmt.Println("Wasn't given a direction to shoot!")
+						playerComponent.AddMessage("Wasn't given a direction to shoot!")
 					} else {
-						fmt.Println("Shoot in the " + direction + " direction!")
+						playerComponent.AddMessage("Shoot in the " + direction + " direction!")
 					}
 				}
 			}
