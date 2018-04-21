@@ -1,6 +1,7 @@
 package world
 
 import (
+	"cloudlike/entity"
 	"fmt"
 	"math/rand"
 )
@@ -8,6 +9,7 @@ import (
 // Level .
 type Level struct {
 	data                  [][]Tile
+	Entities              []*entity.Entity
 	width, height         int
 	id                    int
 	left, right, up, down int
@@ -91,4 +93,8 @@ func (level *Level) GetView(aX int, aY int, width int, height int, blind bool) (
 	}
 
 	return
+}
+
+func (level *Level) AddEntity(entity *entity.Entity) {
+	level.Entities = append(level.Entities, entity)
 }

@@ -15,22 +15,20 @@ import (
 
 const port = "1234"
 
-var entities []*entity.Entity
 var levels []*world.Level
 
 func main() {
-	entities = []*entity.Entity{}
 	levels = []*world.Level{}
 	levels = append(levels, world.NewOverworldSection(16, 16))
 
 	ticker := time.NewTicker(time.Second / 4)
 	go func() {
 		for _ = range ticker.C {
-			system.InitiativeSystem(entities, levels)
-			system.PlayerSystem(entities, levels)
-			system.RenderSystem(entities, levels)
-			system.StatusConditionSystem(entities, levels)
-			entities, levels = system.CleanUpSystem(entities, levels)
+			system.InitiativeSystem(levels)
+			system.PlayerSystem(levels)
+			system.RenderSystem(levels)
+			system.StatusConditionSystem(levels)
+			levels = system.CleanUpSystem(levels)
 		}
 
 	}()
@@ -61,8 +59,8 @@ func HandleSocket(ws *websocket.Conn) {
 	newPlayerEntity.AddComponent(positionComponent)
 	newPlayerEntity.AddComponent(&component.AppearanceComponent{SpriteIndex: 0, Resource: "npc"})
 	newPlayerEntity.AddComponent(&component.DirectionComponent{Direction: 0})
-	entities = append(entities, &newPlayerEntity)
+	//entities = append(entities, &newPlayerEntity)
+	levels[0].AddEntity(&newPlayerEntity)
 
-	fmt.Println("Entities handle sock:", entities)
 	system.WebSocketSystem(newPlayerEntity, ws)
 }
