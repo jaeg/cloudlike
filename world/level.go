@@ -1,6 +1,7 @@
 package world
 
 import (
+	"cloudlike/component"
 	"cloudlike/entity"
 	"fmt"
 	"math/rand"
@@ -92,6 +93,20 @@ func (level *Level) GetView(aX int, aY int, width int, height int, blind bool) (
 		cX++
 	}
 
+	return
+}
+
+func (level *Level) GetEntityAt(x int, y int) (entity *entity.Entity) {
+	for i := 0; i < len(level.Entities); i++ {
+		entity = level.Entities[i]
+		if entity.HasComponent("PositionComponent") {
+			pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
+			if pc.X == x && pc.Y == y {
+				return
+			}
+		}
+	}
+	entity = nil
 	return
 }
 

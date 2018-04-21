@@ -17,17 +17,25 @@ func PlayerSystem(levels []*world.Level) {
 					command := playerComponent.PopCommand()
 					switch command {
 					case "W":
-						pc.Y--
-						dc.Direction = 2
+						if level.GetEntityAt(pc.X, pc.Y-1) == nil {
+							pc.Y--
+							dc.Direction = 2
+						}
 					case "S":
-						pc.Y++
-						dc.Direction = 1
+						if level.GetEntityAt(pc.X, pc.Y+1) == nil {
+							pc.Y++
+							dc.Direction = 1
+						}
 					case "A":
-						pc.X--
-						dc.Direction = 3
+						if level.GetEntityAt(pc.X-1, pc.Y) == nil {
+							pc.X--
+							dc.Direction = 3
+						}
 					case "D":
-						pc.X++
-						dc.Direction = 0
+						if level.GetEntityAt(pc.X+1, pc.Y) == nil {
+							pc.X++
+							dc.Direction = 0
+						}
 					case "F":
 						direction := playerComponent.PopCommand()
 						if direction == "" {
