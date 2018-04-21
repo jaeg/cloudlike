@@ -87,8 +87,8 @@ var draw = function() {
           ctx.fillStyle = "black"
           ctx.fillRect(x*tileWidth*tileMultiplier,y*tileHeight*tileMultiplier,tileWidth*tileMultiplier,tileHeight*tileMultiplier);
         } else {
-          var spriteIndex = drawBuffer[x][y].SpriteIndex
-          var tile = getTileLocation(spriteIndex, 16)
+          var tileIndex = drawBuffer[x][y].TileIndex
+          var tile = getTileLocation(tileIndex, 16)
           drawTile(x*tileWidth*tileMultiplier,y*tileHeight*tileMultiplier,tileWidth,tileHeight,"terrain", tile.X,tile.Y, tileWidth,tileHeight);
         }
       }

@@ -19,7 +19,7 @@ var levels []*world.Level
 
 func main() {
 	levels = []*world.Level{}
-	levels = append(levels, world.NewOverworldSection(16, 16))
+	levels = append(levels, world.NewOverworldSection(100, 100))
 
 	ticker := time.NewTicker(time.Second / 4)
 	go func() {
@@ -59,6 +59,7 @@ func HandleSocket(ws *websocket.Conn) {
 	newPlayerEntity.AddComponent(positionComponent)
 	newPlayerEntity.AddComponent(&component.AppearanceComponent{SpriteIndex: 0, Resource: "npc"})
 	newPlayerEntity.AddComponent(&component.DirectionComponent{Direction: 0})
+	newPlayerEntity.AddComponent(&component.SolidComponent{})
 	//entities = append(entities, &newPlayerEntity)
 	levels[0].AddEntity(&newPlayerEntity)
 

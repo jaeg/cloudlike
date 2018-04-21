@@ -17,24 +17,32 @@ func PlayerSystem(levels []*world.Level) {
 					command := playerComponent.PopCommand()
 					switch command {
 					case "W":
-						if level.GetEntityAt(pc.X, pc.Y-1) == nil {
+						if level.GetSolidEntityAt(pc.X, pc.Y-1) == nil {
 							pc.Y--
 							dc.Direction = 2
+						} else {
+							playerComponent.AddMessage("Something blocks you in that direction!")
 						}
 					case "S":
-						if level.GetEntityAt(pc.X, pc.Y+1) == nil {
+						if level.GetSolidEntityAt(pc.X, pc.Y+1) == nil {
 							pc.Y++
 							dc.Direction = 1
+						} else {
+							playerComponent.AddMessage("Something blocks you in that direction!")
 						}
 					case "A":
-						if level.GetEntityAt(pc.X-1, pc.Y) == nil {
+						if level.GetSolidEntityAt(pc.X-1, pc.Y) == nil {
 							pc.X--
 							dc.Direction = 3
+						} else {
+							playerComponent.AddMessage("Something blocks you in that direction!")
 						}
 					case "D":
-						if level.GetEntityAt(pc.X+1, pc.Y) == nil {
+						if level.GetSolidEntityAt(pc.X+1, pc.Y) == nil {
 							pc.X++
 							dc.Direction = 0
+						} else {
+							playerComponent.AddMessage("Something blocks you in that direction!")
 						}
 					case "F":
 						direction := playerComponent.PopCommand()

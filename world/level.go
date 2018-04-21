@@ -19,6 +19,7 @@ type Level struct {
 //Tile .
 type Tile struct {
 	TileType    int
+	TileIndex   int
 	SpriteIndex int
 	solid       bool
 	floor       bool
@@ -33,7 +34,7 @@ func newLevel(width int, height int) (level *Level) {
 	for x := 0; x < width; x++ {
 		col := []Tile{}
 		for y := 0; y < height; y++ {
-			col = append(col, Tile{TileType: 1, SpriteIndex: 112, solid: false})
+			col = append(col, Tile{TileType: 1, TileIndex: 112, solid: false})
 		}
 		data[x] = append(data[x], col...)
 	}
@@ -47,14 +48,33 @@ func NewOverworldSection(width int, height int) (level *Level) {
 	level = newLevel(width, height)
 	for x := 0; x < width; x++ {
 		for y := 0; y < height; y++ {
-			if rand.Intn(2) == 0 {
+			if rand.Intn(1000) == 0 {
 				level.getTileAt(x, y).TileType = 1
-				level.getTileAt(x, y).SpriteIndex = 112
+				level.getTileAt(x, y).TileIndex = 123
+			} else if rand.Intn(5) == 0 {
+				level.getTileAt(x, y).TileType = 1
+				level.getTileAt(x, y).TileIndex = 121
 			} else {
 				level.getTileAt(x, y).TileType = 2
-				level.getTileAt(x, y).SpriteIndex = 96
+				level.getTileAt(x, y).TileIndex = 122
 			}
 		}
+	}
+
+	//Generate Flower Medows
+	for i := 0; i < 100; i++ {
+		x := getRandom(1, width)
+		y := getRandom(1, height)
+
+		level.createCluster(x, y, 10, 123, 0)
+	}
+
+	//Generate Water
+	for i := 0; i < 100; i++ {
+		x := getRandom(1, width)
+		y := getRandom(1, height)
+
+		level.createCluster(x, y, 100, 181, 0)
 	}
 
 	return
@@ -110,6 +130,56 @@ func (level *Level) GetEntityAt(x int, y int) (entity *entity.Entity) {
 	return
 }
 
+func (level *Level) GetSolidEntityAt(x int, y int) (entity *entity.Entity) {
+	for i := 0; i < len(level.Entities); i++ {
+		entity = level.Entities[i]
+		if entity.HasComponent("PositionComponent") {
+			if entity.HasComponent("SolidComponent") {
+				pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
+				if pc.X == x && pc.Y == y {
+					return
+				}
+			}
+		}
+	}
+	entity = nil
+	return
+}
+
 func (level *Level) AddEntity(entity *entity.Entity) {
 	level.Entities = append(level.Entities, entity)
+}
+
+func (level *Level) createCluster(x int, y int, size int, tileIndex int, spriteIndex int) {
+	for i := 0; i < 200; i++ {
+		n := getRandom(1, 6)
+		e := getRandom(1, 6)
+		s := getRandom(1, 6)
+		w := getRandom(1, 6)
+
+		if n == 1 {
+			x += 1
+		}
+
+		if s == 1 {
+			x--
+		}
+
+		if e == 1 {
+			y++
+		}
+
+		if w == 1 {
+			y--
+		}
+
+		if level.getTileAt(x, y) != nil {
+			level.getTileAt(x, y).SpriteIndex = spriteIndex
+			level.getTileAt(x, y).TileIndex = tileIndex
+		}
+	}
+}
+
+func getRandom(low int, high int) int {
+	return (rand.Intn((high - low))) + low
 }
