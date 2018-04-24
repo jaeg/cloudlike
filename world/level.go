@@ -25,7 +25,7 @@ type Tile struct {
 	TileType    int
 	TileIndex   int
 	SpriteIndex int
-	solid       bool
+	Solid       bool
 	floor       bool
 	wall        bool
 	Locked      bool
@@ -40,7 +40,7 @@ func newLevel(width int, height int) (level *Level) {
 	for x := 0; x < width; x++ {
 		col := []Tile{}
 		for y := 0; y < height; y++ {
-			col = append(col, Tile{TileType: 1, TileIndex: 112, solid: false, VertTo: Transition{Level: -1}, HorzTo: Transition{Level: 1}})
+			col = append(col, Tile{TileType: 1, TileIndex: 112, Solid: false, VertTo: Transition{Level: -1}, HorzTo: Transition{Level: 1}})
 		}
 		data[x] = append(data[x], col...)
 	}
@@ -59,7 +59,8 @@ func NewOverworldSection(width int, height int) (level *Level) {
 				level.GetTileAt(x, y).TileIndex = 123
 			} else if rand.Intn(5) == 0 {
 				level.GetTileAt(x, y).TileType = 1
-				level.GetTileAt(x, y).TileIndex = 121
+				level.GetTileAt(x, y).TileIndex = 140
+				level.GetTileAt(x, y).Solid = true
 			} else {
 				level.GetTileAt(x, y).TileType = 2
 				level.GetTileAt(x, y).TileIndex = 122
@@ -68,7 +69,7 @@ func NewOverworldSection(width int, height int) (level *Level) {
 	}
 
 	//Generate Flower Medows
-	for i := 0; i < 100; i++ {
+	/*for i := 0; i < 100; i++ {
 		x := getRandom(1, width)
 		y := getRandom(1, height)
 
@@ -81,7 +82,7 @@ func NewOverworldSection(width int, height int) (level *Level) {
 		y := getRandom(1, height)
 
 		level.createCluster(x, y, 100, 181, 0)
-	}
+	}*/
 
 	return
 }
@@ -113,12 +114,51 @@ func (level *Level) GetView(aX int, aY int, width int, height int, blind bool) (
 				}
 			}
 
+			if currentTile != nil {
+				tempX := x
+				tempY := y
+				for {
+					stepX := 0
+					stepY := 0
+					deltaX := tempX - aX
+					deltaY := tempY - aY
+					if deltaX < 0 {
+						stepX = 1
+					}
+					if deltaX > 0 {
+						stepX = -1
+					}
+
+					if deltaY < 0 {
+						stepY = 1
+					}
+					if deltaY > 0 {
+						stepY = -1
+					}
+					tempX += stepX
+					tempY += stepY
+					tempTile := level.GetTileAt(tempX, tempY)
+					if tempTile != nil {
+						if tempTile.Solid {
+							currentTile = nil
+							tempX = aX
+							tempY = aY
+						}
+					} else {
+						break
+					}
+
+					if tempX == aX && tempY == aY {
+						break
+					}
+				}
+			}
+
 			col = append(col, currentTile)
 		}
 		data[cX] = append(data[cX], col...)
 		cX++
 	}
-
 	return
 }
 

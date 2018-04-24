@@ -64,6 +64,8 @@ sock.onmessage = function(e) {
         }
       }
     }
+
+    step()
 }
 
 function handleKeyPressed(e) {
@@ -156,5 +158,5 @@ resourceManager.loadResources({terrain:"assets/space/tiny_galaxy_world.png", ite
 //Render stuff
 function step() {
   draw();
-  window.requestAnimationFrame(step);
+  //window.requestAnimationFrame(step);
 }

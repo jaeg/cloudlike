@@ -33,6 +33,8 @@ func PlayerSystem(levels []*world.Level) {
 									pc.X = tile.VertTo.X
 									pc.Y = tile.VertTo.Y
 								}
+							} else if tile.Solid == true {
+								playerComponent.AddMessage("A wall blocks you in that direction!")
 							} else {
 								pc.Y--
 								dc.Direction = 2
@@ -54,6 +56,8 @@ func PlayerSystem(levels []*world.Level) {
 									pc.X = tile.VertTo.X
 									pc.Y = tile.VertTo.Y
 								}
+							} else if tile.Solid == true {
+								playerComponent.AddMessage("A wall blocks you in that direction!")
 							} else {
 								pc.Y++
 								dc.Direction = 1
@@ -75,6 +79,8 @@ func PlayerSystem(levels []*world.Level) {
 									pc.X = tile.HorzTo.X
 									pc.Y = tile.HorzTo.Y
 								}
+							} else if tile.Solid == true {
+								playerComponent.AddMessage("A wall blocks you in that direction!")
 							} else {
 								pc.X--
 								dc.Direction = 3
@@ -96,6 +102,8 @@ func PlayerSystem(levels []*world.Level) {
 									pc.X = tile.HorzTo.X
 									pc.Y = tile.HorzTo.Y
 								}
+							} else if tile.Solid == true {
+								playerComponent.AddMessage("A wall blocks you in that direction!")
 							} else {
 								pc.X++
 								dc.Direction = 0
