@@ -4,6 +4,7 @@ import (
 	"cloudlike/component"
 	"cloudlike/entity"
 	"fmt"
+	"math"
 	"math/rand"
 )
 
@@ -115,42 +116,8 @@ func (level *Level) GetView(aX int, aY int, width int, height int, blind bool) (
 			}
 
 			if currentTile != nil {
-				tempX := x
-				tempY := y
-				for {
-					stepX := 0
-					stepY := 0
-					deltaX := tempX - aX
-					deltaY := tempY - aY
-					if deltaX < 0 {
-						stepX = 1
-					}
-					if deltaX > 0 {
-						stepX = -1
-					}
-
-					if deltaY < 0 {
-						stepY = 1
-					}
-					if deltaY > 0 {
-						stepY = -1
-					}
-					tempX += stepX
-					tempY += stepY
-					tempTile := level.GetTileAt(tempX, tempY)
-					if tempTile != nil {
-						if tempTile.Solid {
-							currentTile = nil
-							tempX = aX
-							tempY = aY
-						}
-					} else {
-						break
-					}
-
-					if tempX == aX && tempY == aY {
-						break
-					}
+				if los(aX, aY, x, y, level) == false {
+					currentTile = nil
 				}
 			}
 
@@ -237,4 +204,68 @@ func (level *Level) createCluster(x int, y int, size int, tileIndex int, spriteI
 
 func getRandom(low int, high int) int {
 	return (rand.Intn((high - low))) + low
+}
+
+func Sgn(a int) int {
+	switch {
+	case a < 0:
+		return -1
+	case a > 0:
+		return +1
+	}
+	return 0
+}
+
+//Ported from http://www.roguebasin.com/index.php?title=Simple_Line_of_Sight
+func los(pX int, pY int, tX int, tY int, level *Level) bool {
+	deltaX := pX - tX
+	deltaY := pY - tY
+
+	absDeltaX := math.Abs(float64(deltaX))
+	absDeltaY := math.Abs(float64(deltaY))
+
+	signX := Sgn(deltaX)
+	signY := Sgn(deltaY)
+
+	if absDeltaX > absDeltaY {
+		t := absDeltaY*2 - absDeltaX
+		for {
+			if t >= 0 {
+				tY += signY
+				t -= absDeltaX * 2
+			}
+
+			tX += signX
+			t += absDeltaY * 2
+
+			if tX == pX && tY == pY {
+				return true
+			}
+			if level.GetTileAt(tX, tY).Solid == true {
+				break
+			}
+		}
+		return false
+	}
+
+	t := absDeltaX*2 - absDeltaY
+
+	for {
+		if t >= 0 {
+			tX += signX
+			t -= absDeltaY * 2
+		}
+		tY += signY
+		t += absDeltaX * 2
+		if tX == pX && tY == pY {
+			return true
+		}
+
+		if level.GetTileAt(tX, tY).Solid == true {
+			break
+		}
+	}
+
+	return false
+
 }
