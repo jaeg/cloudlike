@@ -16,6 +16,10 @@ type Level struct {
 	left, right, up, down int
 }
 
+type Transition struct {
+	X, Y, Level int
+}
+
 //Tile .
 type Tile struct {
 	TileType    int
@@ -25,6 +29,8 @@ type Tile struct {
 	floor       bool
 	wall        bool
 	Locked      bool
+	VertTo      Transition
+	HorzTo      Transition
 }
 
 func newLevel(width int, height int) (level *Level) {
@@ -34,7 +40,7 @@ func newLevel(width int, height int) (level *Level) {
 	for x := 0; x < width; x++ {
 		col := []Tile{}
 		for y := 0; y < height; y++ {
-			col = append(col, Tile{TileType: 1, TileIndex: 112, solid: false})
+			col = append(col, Tile{TileType: 1, TileIndex: 112, solid: false, VertTo: Transition{Level: -1}, HorzTo: Transition{Level: 1}})
 		}
 		data[x] = append(data[x], col...)
 	}
@@ -49,14 +55,14 @@ func NewOverworldSection(width int, height int) (level *Level) {
 	for x := 0; x < width; x++ {
 		for y := 0; y < height; y++ {
 			if rand.Intn(1000) == 0 {
-				level.getTileAt(x, y).TileType = 1
-				level.getTileAt(x, y).TileIndex = 123
+				level.GetTileAt(x, y).TileType = 1
+				level.GetTileAt(x, y).TileIndex = 123
 			} else if rand.Intn(5) == 0 {
-				level.getTileAt(x, y).TileType = 1
-				level.getTileAt(x, y).TileIndex = 121
+				level.GetTileAt(x, y).TileType = 1
+				level.GetTileAt(x, y).TileIndex = 121
 			} else {
-				level.getTileAt(x, y).TileType = 2
-				level.getTileAt(x, y).TileIndex = 122
+				level.GetTileAt(x, y).TileType = 2
+				level.GetTileAt(x, y).TileIndex = 122
 			}
 		}
 	}
@@ -80,7 +86,7 @@ func NewOverworldSection(width int, height int) (level *Level) {
 	return
 }
 
-func (level *Level) getTileAt(x int, y int) (tile *Tile) {
+func (level *Level) GetTileAt(x int, y int) (tile *Tile) {
 	if x < level.width && y < level.height && x >= 0 && y >= 0 {
 		tile = &level.data[x][y]
 	}
@@ -100,7 +106,7 @@ func (level *Level) GetView(aX int, aY int, width int, height int, blind bool) (
 	for x := left; x <= right; x++ {
 		col := []*Tile{}
 		for y := up; y <= down; y++ {
-			currentTile := level.getTileAt(x, y)
+			currentTile := level.GetTileAt(x, y)
 			if blind {
 				if y < aY-height/4 || y > aY+height/4 || x > aX+width/4 || x < aX-width/4 {
 					currentTile = nil
@@ -150,6 +156,15 @@ func (level *Level) AddEntity(entity *entity.Entity) {
 	level.Entities = append(level.Entities, entity)
 }
 
+func (level *Level) RemoveEntity(entity *entity.Entity) {
+	for i := 0; i < len(level.Entities); i++ {
+		if level.Entities[i] == entity {
+			level.Entities = append(level.Entities[:i], level.Entities[i+1:]...)
+
+		}
+	}
+}
+
 func (level *Level) createCluster(x int, y int, size int, tileIndex int, spriteIndex int) {
 	for i := 0; i < 200; i++ {
 		n := getRandom(1, 6)
@@ -173,9 +188,9 @@ func (level *Level) createCluster(x int, y int, size int, tileIndex int, spriteI
 			y--
 		}
 
-		if level.getTileAt(x, y) != nil {
-			level.getTileAt(x, y).SpriteIndex = spriteIndex
-			level.getTileAt(x, y).TileIndex = tileIndex
+		if level.GetTileAt(x, y) != nil {
+			level.GetTileAt(x, y).SpriteIndex = spriteIndex
+			level.GetTileAt(x, y).TileIndex = tileIndex
 		}
 	}
 }

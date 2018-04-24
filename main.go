@@ -20,6 +20,7 @@ var levels []*world.Level
 func main() {
 	levels = []*world.Level{}
 	levels = append(levels, world.NewOverworldSection(100, 100))
+	levels = append(levels, world.NewOverworldSection(10, 10))
 
 	ticker := time.NewTicker(time.Second / 4)
 	go func() {

@@ -19,7 +19,6 @@ type entityView struct {
 // RenderSystem .
 func RenderSystem(levels []*world.Level) {
 	for _, level := range levels {
-
 		var seeableEntities []entityView
 		for _, entity := range level.Entities {
 			if entity.HasComponent("AppearanceComponent") {

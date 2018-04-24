@@ -8,7 +8,9 @@ import (
 // PlayerSystem .
 func PlayerSystem(levels []*world.Level) {
 	for _, level := range levels {
+		//fmt.Println(t, len(level.Entities))
 		for _, entity := range level.Entities {
+
 			if entity.HasComponent("PlayerComponent") {
 				if entity.HasComponent("MyTurnComponent") {
 					pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
@@ -18,29 +20,86 @@ func PlayerSystem(levels []*world.Level) {
 					switch command {
 					case "W":
 						if level.GetSolidEntityAt(pc.X, pc.Y-1) == nil {
-							pc.Y--
-							dc.Direction = 2
+							tile := level.GetTileAt(pc.X, pc.Y-1)
+							if tile == nil {
+								tile = level.GetTileAt(pc.X, pc.Y)
+								if tile.VertTo.Level == -1 {
+									playerComponent.AddMessage("You've hit the edge of the world!")
+								} else {
+									//Switch level
+									level.RemoveEntity(entity)
+									levels[tile.VertTo.Level].AddEntity(entity)
+									pc.Level = tile.VertTo.Level
+									pc.X = tile.VertTo.X
+									pc.Y = tile.VertTo.Y
+								}
+							} else {
+								pc.Y--
+								dc.Direction = 2
+							}
 						} else {
 							playerComponent.AddMessage("Something blocks you in that direction!")
 						}
 					case "S":
 						if level.GetSolidEntityAt(pc.X, pc.Y+1) == nil {
-							pc.Y++
-							dc.Direction = 1
+							tile := level.GetTileAt(pc.X, pc.Y+1)
+							if tile == nil {
+								tile = level.GetTileAt(pc.X, pc.Y)
+								if tile.VertTo.Level == -1 {
+									playerComponent.AddMessage("You've hit the edge of the world!")
+								} else {
+									level.RemoveEntity(entity)
+									levels[tile.VertTo.Level].AddEntity(entity)
+									pc.Level = tile.VertTo.Level
+									pc.X = tile.VertTo.X
+									pc.Y = tile.VertTo.Y
+								}
+							} else {
+								pc.Y++
+								dc.Direction = 1
+							}
 						} else {
 							playerComponent.AddMessage("Something blocks you in that direction!")
 						}
 					case "A":
 						if level.GetSolidEntityAt(pc.X-1, pc.Y) == nil {
-							pc.X--
-							dc.Direction = 3
+							tile := level.GetTileAt(pc.X-1, pc.Y)
+							if tile == nil {
+								tile = level.GetTileAt(pc.X, pc.Y)
+								if tile.HorzTo.Level == -1 {
+									playerComponent.AddMessage("You've hit the edge of the world!")
+								} else {
+									level.RemoveEntity(entity)
+									levels[tile.HorzTo.Level].AddEntity(entity)
+									pc.Level = tile.HorzTo.Level
+									pc.X = tile.HorzTo.X
+									pc.Y = tile.HorzTo.Y
+								}
+							} else {
+								pc.X--
+								dc.Direction = 3
+							}
 						} else {
 							playerComponent.AddMessage("Something blocks you in that direction!")
 						}
 					case "D":
 						if level.GetSolidEntityAt(pc.X+1, pc.Y) == nil {
-							pc.X++
-							dc.Direction = 0
+							tile := level.GetTileAt(pc.X+1, pc.Y)
+							if tile == nil {
+								tile = level.GetTileAt(pc.X, pc.Y)
+								if tile.HorzTo.Level == -1 {
+									playerComponent.AddMessage("You've hit the edge of the world!")
+								} else {
+									level.RemoveEntity(entity)
+									levels[tile.HorzTo.Level].AddEntity(entity)
+									pc.Level = tile.HorzTo.Level
+									pc.X = tile.HorzTo.X
+									pc.Y = tile.HorzTo.Y
+								}
+							} else {
+								pc.X++
+								dc.Direction = 0
+							}
 						} else {
 							playerComponent.AddMessage("Something blocks you in that direction!")
 						}
