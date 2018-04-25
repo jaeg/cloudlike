@@ -7,6 +7,7 @@ import (
 	"cloudlike/world"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -22,11 +23,28 @@ func main() {
 	levels = append(levels, world.NewOverworldSection(100, 100))
 	levels = append(levels, world.NewOverworldSection(10, 10))
 
+	for x := 0; x < 100; x++ {
+		for y := 0; y < 100; y++ {
+			if rand.Intn(100) == 0 {
+				entity := entity.Entity{}
+				entity.AddComponent(&component.WanderAIComponent{})
+				entity.AddComponent(&component.InitiativeComponent{DefaultValue: 4, Ticks: 1})
+				entity.AddComponent(&component.PositionComponent{X: x, Y: y, Level: 0})
+				entity.AddComponent(&component.AppearanceComponent{SpriteIndex: 4, Resource: "npc"})
+				entity.AddComponent(&component.DirectionComponent{Direction: 0})
+				entity.AddComponent(&component.SolidComponent{})
+				//entities = append(entities, &newPlayerEntity)
+				levels[0].AddEntity(&entity)
+			}
+		}
+	}
+
 	ticker := time.NewTicker(time.Second / 4)
 	go func() {
 		for _ = range ticker.C {
 			system.InitiativeSystem(levels)
 			system.PlayerSystem(levels)
+			system.AISystem(levels)
 			system.RenderSystem(levels)
 			system.StatusConditionSystem(levels)
 			levels = system.CleanUpSystem(levels)

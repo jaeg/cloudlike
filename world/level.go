@@ -27,6 +27,7 @@ type Tile struct {
 	TileIndex   int
 	SpriteIndex int
 	Solid       bool
+	Water       bool
 	floor       bool
 	wall        bool
 	Locked      bool
@@ -60,8 +61,8 @@ func NewOverworldSection(width int, height int) (level *Level) {
 				level.GetTileAt(x, y).TileIndex = 123
 			} else if rand.Intn(5) == 0 {
 				level.GetTileAt(x, y).TileType = 1
-				level.GetTileAt(x, y).TileIndex = 140
-				level.GetTileAt(x, y).Solid = true
+				level.GetTileAt(x, y).TileIndex = 121
+				level.GetTileAt(x, y).Solid = false
 			} else {
 				level.GetTileAt(x, y).TileType = 2
 				level.GetTileAt(x, y).TileIndex = 122
@@ -70,20 +71,20 @@ func NewOverworldSection(width int, height int) (level *Level) {
 	}
 
 	//Generate Flower Medows
-	/*for i := 0; i < 100; i++ {
+	for i := 0; i < 20; i++ {
 		x := getRandom(1, width)
 		y := getRandom(1, height)
 
-		level.createCluster(x, y, 10, 123, 0)
+		level.createCluster(x, y, 10, 123, 0, false, false)
 	}
 
 	//Generate Water
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 10; i++ {
 		x := getRandom(1, width)
 		y := getRandom(1, height)
 
-		level.createCluster(x, y, 100, 181, 0)
-	}*/
+		level.createCluster(x, y, 100, 181, 0, false, true)
+	}
 
 	return
 }
@@ -172,7 +173,7 @@ func (level *Level) RemoveEntity(entity *entity.Entity) {
 	}
 }
 
-func (level *Level) createCluster(x int, y int, size int, tileIndex int, spriteIndex int) {
+func (level *Level) createCluster(x int, y int, size int, tileIndex int, spriteIndex int, solid bool, water bool) {
 	for i := 0; i < 200; i++ {
 		n := getRandom(1, 6)
 		e := getRandom(1, 6)
@@ -196,8 +197,11 @@ func (level *Level) createCluster(x int, y int, size int, tileIndex int, spriteI
 		}
 
 		if level.GetTileAt(x, y) != nil {
-			level.GetTileAt(x, y).SpriteIndex = spriteIndex
-			level.GetTileAt(x, y).TileIndex = tileIndex
+			tile := level.GetTileAt(x, y)
+			tile.SpriteIndex = spriteIndex
+			tile.TileIndex = tileIndex
+			tile.Water = water
+			tile.Solid = solid
 		}
 	}
 }

@@ -33,15 +33,16 @@ func PlayerSystem(levels []*world.Level) {
 									pc.X = tile.VertTo.X
 									pc.Y = tile.VertTo.Y
 								}
-							} else if tile.Solid == true {
-								playerComponent.AddMessage("A wall blocks you in that direction!")
+							} else if tile.Solid == true || tile.Water == true {
+								playerComponent.AddMessage("You can't walk that way!")
 							} else {
 								pc.Y--
-								dc.Direction = 2
+
 							}
 						} else {
 							playerComponent.AddMessage("Something blocks you in that direction!")
 						}
+						dc.Direction = 2
 					case "S":
 						if level.GetSolidEntityAt(pc.X, pc.Y+1) == nil {
 							tile := level.GetTileAt(pc.X, pc.Y+1)
@@ -56,15 +57,16 @@ func PlayerSystem(levels []*world.Level) {
 									pc.X = tile.VertTo.X
 									pc.Y = tile.VertTo.Y
 								}
-							} else if tile.Solid == true {
-								playerComponent.AddMessage("A wall blocks you in that direction!")
+							} else if tile.Solid == true || tile.Water == true {
+								playerComponent.AddMessage("You can't walk that way!")
 							} else {
 								pc.Y++
-								dc.Direction = 1
+
 							}
 						} else {
 							playerComponent.AddMessage("Something blocks you in that direction!")
 						}
+						dc.Direction = 1
 					case "A":
 						if level.GetSolidEntityAt(pc.X-1, pc.Y) == nil {
 							tile := level.GetTileAt(pc.X-1, pc.Y)
@@ -79,15 +81,16 @@ func PlayerSystem(levels []*world.Level) {
 									pc.X = tile.HorzTo.X
 									pc.Y = tile.HorzTo.Y
 								}
-							} else if tile.Solid == true {
-								playerComponent.AddMessage("A wall blocks you in that direction!")
+							} else if tile.Solid == true || tile.Water == true {
+								playerComponent.AddMessage("You can't walk that way!")
 							} else {
 								pc.X--
-								dc.Direction = 3
+
 							}
 						} else {
 							playerComponent.AddMessage("Something blocks you in that direction!")
 						}
+						dc.Direction = 3
 					case "D":
 						if level.GetSolidEntityAt(pc.X+1, pc.Y) == nil {
 							tile := level.GetTileAt(pc.X+1, pc.Y)
@@ -102,15 +105,15 @@ func PlayerSystem(levels []*world.Level) {
 									pc.X = tile.HorzTo.X
 									pc.Y = tile.HorzTo.Y
 								}
-							} else if tile.Solid == true {
-								playerComponent.AddMessage("A wall blocks you in that direction!")
+							} else if tile.Solid == true || tile.Water == true {
+								playerComponent.AddMessage("You can't walk that way!")
 							} else {
 								pc.X++
-								dc.Direction = 0
 							}
 						} else {
 							playerComponent.AddMessage("Something blocks you in that direction!")
 						}
+						dc.Direction = 0
 					case "F":
 						direction := playerComponent.PopCommand()
 						if direction == "" {
