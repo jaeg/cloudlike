@@ -6,8 +6,8 @@ import (
 )
 
 // PlayerSystem .
-func PlayerSystem(levels []*world.Level) {
-	for _, level := range levels {
+func PlayerSystem(levels []*world.Level) []*world.Level {
+	for currentLevel, level := range levels {
 		//fmt.Println(t, len(level.Entities))
 		for _, entity := range level.Entities {
 
@@ -37,7 +37,20 @@ func PlayerSystem(levels []*world.Level) {
 								playerComponent.AddMessage("You can't walk that way!")
 							} else {
 								pc.Y--
-
+								if tile.IsStairs {
+									if tile.StairsTo == -1 {
+										levelIndex := len(levels)
+										newLevel, tX, tY := world.NewDungeon(100, 100, currentLevel, pc.X, pc.Y)
+										levels = append(levels, newLevel)
+										tile.StairsTo = levelIndex
+										tile.StairsX = tX
+										tile.StairsY = tY
+									}
+									level.RemoveEntity(entity)
+									levels[tile.StairsTo].AddEntity(entity)
+									pc.X = tile.StairsX
+									pc.Y = tile.StairsY
+								}
 							}
 						} else {
 							playerComponent.AddMessage("Something blocks you in that direction!")
@@ -61,7 +74,20 @@ func PlayerSystem(levels []*world.Level) {
 								playerComponent.AddMessage("You can't walk that way!")
 							} else {
 								pc.Y++
-
+								if tile.IsStairs {
+									if tile.StairsTo == -1 {
+										levelIndex := len(levels)
+										newLevel, tX, tY := world.NewDungeon(100, 100, currentLevel, pc.X, pc.Y)
+										levels = append(levels, newLevel)
+										tile.StairsTo = levelIndex
+										tile.StairsX = tX
+										tile.StairsY = tY
+									}
+									level.RemoveEntity(entity)
+									levels[tile.StairsTo].AddEntity(entity)
+									pc.X = tile.StairsX
+									pc.Y = tile.StairsY
+								}
 							}
 						} else {
 							playerComponent.AddMessage("Something blocks you in that direction!")
@@ -85,7 +111,20 @@ func PlayerSystem(levels []*world.Level) {
 								playerComponent.AddMessage("You can't walk that way!")
 							} else {
 								pc.X--
-
+								if tile.IsStairs {
+									if tile.StairsTo == -1 {
+										levelIndex := len(levels)
+										newLevel, tX, tY := world.NewDungeon(100, 100, currentLevel, pc.X, pc.Y)
+										levels = append(levels, newLevel)
+										tile.StairsTo = levelIndex
+										tile.StairsX = tX
+										tile.StairsY = tY
+									}
+									level.RemoveEntity(entity)
+									levels[tile.StairsTo].AddEntity(entity)
+									pc.X = tile.StairsX
+									pc.Y = tile.StairsY
+								}
 							}
 						} else {
 							playerComponent.AddMessage("Something blocks you in that direction!")
@@ -109,6 +148,20 @@ func PlayerSystem(levels []*world.Level) {
 								playerComponent.AddMessage("You can't walk that way!")
 							} else {
 								pc.X++
+								if tile.IsStairs {
+									if tile.StairsTo == -1 {
+										levelIndex := len(levels)
+										newLevel, tX, tY := world.NewDungeon(100, 100, currentLevel, pc.X, pc.Y)
+										levels = append(levels, newLevel)
+										tile.StairsTo = levelIndex
+										tile.StairsX = tX
+										tile.StairsY = tY
+									}
+									level.RemoveEntity(entity)
+									levels[tile.StairsTo].AddEntity(entity)
+									pc.X = tile.StairsX
+									pc.Y = tile.StairsY
+								}
 							}
 						} else {
 							playerComponent.AddMessage("Something blocks you in that direction!")
@@ -126,6 +179,7 @@ func PlayerSystem(levels []*world.Level) {
 			}
 		}
 	}
+	return levels
 }
 func triggerNewWorld(levels []*world.Level, currentLevel *world.Level, currentLevelIndex int, deltaX int, deltaY int) []*world.Level {
 	levelIndex := len(levels)

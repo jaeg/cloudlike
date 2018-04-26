@@ -27,6 +27,10 @@ type Tile struct {
 	TileIndex   int
 	SpriteIndex int
 	Solid       bool
+	IsStairs    bool
+	StairsTo    int
+	StairsX     int
+	StairsY     int
 	Water       bool
 	floor       bool
 	wall        bool
@@ -42,7 +46,7 @@ func newLevel(width int, height int) (level *Level) {
 	for x := 0; x < width; x++ {
 		col := []Tile{}
 		for y := 0; y < height; y++ {
-			col = append(col, Tile{TileType: 1, TileIndex: 112, Solid: false, VertTo: Transition{Level: -1}, HorzTo: Transition{Level: -1}})
+			col = append(col, Tile{TileType: 1, TileIndex: 112, Solid: false, StairsTo: -1, IsStairs: false, VertTo: Transition{Level: -1}, HorzTo: Transition{Level: -1}})
 		}
 		data[x] = append(data[x], col...)
 	}
@@ -58,7 +62,9 @@ func NewOverworldSection(width int, height int) (level *Level) {
 		for y := 0; y < height; y++ {
 			if rand.Intn(1000) == 0 {
 				level.GetTileAt(x, y).TileType = 1
-				level.GetTileAt(x, y).TileIndex = 123
+				level.GetTileAt(x, y).TileIndex = 13
+				level.GetTileAt(x, y).StairsTo = -1
+				level.GetTileAt(x, y).IsStairs = true
 			} else if rand.Intn(5) == 0 {
 				level.GetTileAt(x, y).TileType = 1
 				level.GetTileAt(x, y).TileIndex = 121
@@ -85,6 +91,39 @@ func NewOverworldSection(width int, height int) (level *Level) {
 
 		level.createCluster(x, y, 100, 181, 0, false, true)
 	}
+
+	return
+}
+
+func NewDungeon(width int, height int, stairsUpTo int, fromX int, fromY int) (level *Level, pX int, pY int) {
+	fmt.Println("Creating dungeon")
+	level = newLevel(width, height)
+	for x := 0; x < width; x++ {
+		for y := 0; y < height; y++ {
+			if rand.Intn(1000) == 0 {
+				level.GetTileAt(x, y).TileType = 1
+				level.GetTileAt(x, y).TileIndex = 12
+				level.GetTileAt(x, y).StairsTo = -1
+				level.GetTileAt(x, y).IsStairs = true
+			} else if rand.Intn(5) == 0 {
+				level.GetTileAt(x, y).TileType = 1
+				level.GetTileAt(x, y).TileIndex = 8
+				level.GetTileAt(x, y).Solid = false
+			} else {
+				level.GetTileAt(x, y).TileType = 2
+				level.GetTileAt(x, y).TileIndex = 7
+			}
+		}
+	}
+
+	pX = getRandom(0, width)
+	pY = getRandom(0, height)
+	level.GetTileAt(pX, pY).IsStairs = true
+	level.GetTileAt(pX, pY).StairsTo = stairsUpTo
+	level.GetTileAt(pX, pY).StairsX = fromX
+	level.GetTileAt(pX, pY).StairsY = fromY
+	level.GetTileAt(pX, pY).TileIndex = 13
+	level.GetTileAt(pX, pY).Solid = false
 
 	return
 }

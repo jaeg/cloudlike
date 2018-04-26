@@ -21,11 +21,11 @@ var levels []*world.Level
 func main() {
 	start := time.Now()
 	levels = []*world.Level{}
-	levels = append(levels, world.NewOverworldSection(10000, 10000))
+	levels = append(levels, world.NewOverworldSection(1000, 1000))
 	elapsed := time.Since(start)
 	log.Printf("Generating the world took %s", elapsed)
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 10; i++ {
 		x := rand.Intn(100)
 		y := rand.Intn(100)
 
@@ -46,7 +46,7 @@ func main() {
 		for _ = range ticker.C {
 			//start := time.Now()
 			system.InitiativeSystem(levels)
-			system.PlayerSystem(levels)
+			levels = system.PlayerSystem(levels)
 			system.AISystem(levels)
 			system.RenderSystem(levels)
 			system.StatusConditionSystem(levels)
