@@ -19,35 +19,40 @@ const port = "1234"
 var levels []*world.Level
 
 func main() {
+	start := time.Now()
 	levels = []*world.Level{}
-	levels = append(levels, world.NewOverworldSection(100, 100))
-	levels = append(levels, world.NewOverworldSection(10, 10))
+	levels = append(levels, world.NewOverworldSection(10000, 10000))
+	elapsed := time.Since(start)
+	log.Printf("Generating the world took %s", elapsed)
 
-	for x := 0; x < 100; x++ {
-		for y := 0; y < 100; y++ {
-			if rand.Intn(100) == 0 {
-				entity := entity.Entity{}
-				entity.AddComponent(&component.WanderAIComponent{})
-				entity.AddComponent(&component.InitiativeComponent{DefaultValue: 4, Ticks: 1})
-				entity.AddComponent(&component.PositionComponent{X: x, Y: y, Level: 0})
-				entity.AddComponent(&component.AppearanceComponent{SpriteIndex: 4, Resource: "npc"})
-				entity.AddComponent(&component.DirectionComponent{Direction: 0})
-				entity.AddComponent(&component.SolidComponent{})
-				//entities = append(entities, &newPlayerEntity)
-				levels[0].AddEntity(&entity)
-			}
-		}
+	for i := 0; i < 1000; i++ {
+		x := rand.Intn(100)
+		y := rand.Intn(100)
+
+		entity := entity.Entity{}
+		entity.AddComponent(&component.WanderAIComponent{})
+		entity.AddComponent(&component.InitiativeComponent{DefaultValue: 4, Ticks: 1})
+		entity.AddComponent(&component.PositionComponent{X: x, Y: y, Level: 0})
+		entity.AddComponent(&component.AppearanceComponent{SpriteIndex: 4, Resource: "npc"})
+		entity.AddComponent(&component.DirectionComponent{Direction: 0})
+		entity.AddComponent(&component.SolidComponent{})
+		//entities = append(entities, &newPlayerEntity)
+		levels[0].AddEntity(&entity)
+
 	}
 
 	ticker := time.NewTicker(time.Second / 4)
 	go func() {
 		for _ = range ticker.C {
+			//start := time.Now()
 			system.InitiativeSystem(levels)
 			system.PlayerSystem(levels)
 			system.AISystem(levels)
 			system.RenderSystem(levels)
 			system.StatusConditionSystem(levels)
 			levels = system.CleanUpSystem(levels)
+			//elapsed := time.Since(start)
+			//log.Printf("Game loop took %s", elapsed)
 		}
 
 	}()

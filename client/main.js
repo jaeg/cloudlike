@@ -27,7 +27,7 @@ entities = []
 player = {}
 
 sock.onmessage = function(e) {
-
+    fpsDiv.innerHTML = "FPS:" + fps.getFPS();
     var payload = e.data;
     var index = payload.indexOf(":");
     var type = payload.substr(0,index);
@@ -79,7 +79,6 @@ var fps = {	startTime : 0,	frameNumber : 0,	getFPS : function(){		this.frameNumb
 var fpsDiv = document.getElementById("fps");
 //Main Loop
 var draw = function() {
-  fpsDiv.innerHTML = "FPS:" + fps.getFPS();
   ctx.clearRect(0, 0, c.width, c.height);
   ctx.imageSmoothingEnabled = false;
   if (drawBuffer != null) {

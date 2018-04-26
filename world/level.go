@@ -42,7 +42,7 @@ func newLevel(width int, height int) (level *Level) {
 	for x := 0; x < width; x++ {
 		col := []Tile{}
 		for y := 0; y < height; y++ {
-			col = append(col, Tile{TileType: 1, TileIndex: 112, Solid: false, VertTo: Transition{Level: -1}, HorzTo: Transition{Level: 1}})
+			col = append(col, Tile{TileType: 1, TileIndex: 112, Solid: false, VertTo: Transition{Level: -1}, HorzTo: Transition{Level: -1}})
 		}
 		data[x] = append(data[x], col...)
 	}

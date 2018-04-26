@@ -127,3 +127,60 @@ func PlayerSystem(levels []*world.Level) {
 		}
 	}
 }
+func triggerNewWorld(levels []*world.Level, currentLevel *world.Level, currentLevelIndex int, deltaX int, deltaY int) []*world.Level {
+	levelIndex := len(levels)
+	newLevel := world.NewOverworldSection(100, 100)
+	levels = append(levels, newLevel)
+
+	if deltaX > 0 {
+		for y := 0; y < 100; y++ {
+			tile := currentLevel.GetTileAt(99, y)
+			tile.HorzTo.Level = levelIndex
+			tile.HorzTo.X = 0
+			tile.HorzTo.Y = y
+
+			tile = newLevel.GetTileAt(0, y)
+			tile.HorzTo.Level = currentLevelIndex
+			tile.HorzTo.X = 99
+			tile.HorzTo.Y = y
+		}
+	} else if deltaX < 0 {
+		for y := 0; y < 100; y++ {
+			tile := currentLevel.GetTileAt(0, y)
+			tile.HorzTo.Level = levelIndex
+			tile.HorzTo.X = 99
+			tile.HorzTo.Y = y
+
+			tile = newLevel.GetTileAt(99, y)
+			tile.HorzTo.Level = currentLevelIndex
+			tile.HorzTo.X = 0
+			tile.HorzTo.Y = y
+		}
+
+	} else if deltaY < 0 {
+		for x := 0; x < 100; x++ {
+			tile := currentLevel.GetTileAt(x, 0)
+			tile.VertTo.Level = levelIndex
+			tile.VertTo.X = x
+			tile.VertTo.Y = 99
+
+			tile = newLevel.GetTileAt(x, 99)
+			tile.VertTo.Level = currentLevelIndex
+			tile.VertTo.X = x
+			tile.VertTo.Y = 0
+		}
+	} else if deltaY > 0 {
+		for x := 0; x < 100; x++ {
+			tile := currentLevel.GetTileAt(x, 99)
+			tile.VertTo.Level = levelIndex
+			tile.VertTo.X = x
+			tile.VertTo.Y = 0
+
+			tile = newLevel.GetTileAt(x, 0)
+			tile.VertTo.Level = currentLevelIndex
+			tile.VertTo.X = x
+			tile.VertTo.Y = 99
+		}
+	}
+	return levels
+}
