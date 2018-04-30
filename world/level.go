@@ -92,6 +92,9 @@ func NewOverworldSection(width int, height int) (level *Level) {
 		level.createCluster(x, y, 100, 181, 0, false, true)
 	}
 
+	//create a town
+	level.buildRecursiveRoom(0, 0, 20, 20, 9)
+
 	return
 }
 
@@ -246,6 +249,9 @@ func (level *Level) createCluster(x int, y int, size int, tileIndex int, spriteI
 }
 
 func getRandom(low int, high int) int {
+	if low == high {
+		return low
+	}
 	return (rand.Intn((high - low))) + low
 }
 
@@ -311,4 +317,139 @@ func los(pX int, pY int, tX int, tY int, level *Level) bool {
 
 	return false
 
+}
+
+// Ported from here: https://github.com/tome2/tome2/blob/master/src/generate.cc
+func (level *Level) buildRecursiveRoom(x1 int, y1 int, x2 int, y2 int, power int) {
+	xSize := x2 - x1
+	ySize := y2 - y1
+
+	if xSize < 0 || ySize < 0 {
+		return
+	}
+
+	choice := 0
+	if power > 3 && xSize > 12 && ySize > 12 {
+		choice = 1
+	} else {
+		if power < 10 {
+			if getRandom(0, 10) > 2 && xSize < 8 && ySize < 8 {
+				choice = 4
+			} else {
+				choice = getRandom(2, 4)
+				fmt.Println(choice)
+			}
+		}
+	}
+
+	if choice == 1 {
+		//Outer walls
+		for x := x1; x <= x2; x++ {
+			level.GetTileAt(x, y1).TileIndex = 0
+			level.GetTileAt(x, y2).TileIndex = 0
+		}
+
+		for y := y1 + 1; y < y2; y++ {
+			level.GetTileAt(x1, y).TileIndex = 6
+			level.GetTileAt(x2, y).TileIndex = 6
+		}
+
+		if getRandom(0, 2) == 0 {
+			y := getRandom(0, ySize) + y1
+			level.GetTileAt(x1, y).TileIndex = 121
+			level.GetTileAt(x2, y).TileIndex = 121
+		} else {
+
+			x := getRandom(0, xSize) + x1
+			level.GetTileAt(x, y1).TileIndex = 121
+			level.GetTileAt(x, y2).TileIndex = 121
+		}
+
+		//Size of keep
+		t1 := getRandom(0, ySize/3) + y1
+		t2 := y2 - getRandom(0, ySize/3)
+		t3 := getRandom(0, xSize/3) + x1
+		t4 := x2 - getRandom(0, xSize/3)
+
+		//Above and below
+		level.buildRecursiveRoom(x1+1, y1+1, x2-1, t1, power+1)
+		level.buildRecursiveRoom(x1+1, t2, x2-1, y2, power+1)
+
+		//Left and right
+		level.buildRecursiveRoom(x1+1, t1+1, t3, t2-1, power+3)
+		level.buildRecursiveRoom(t4, t1+1, x2-1, t2-1, power+3)
+
+		x1 = t3
+		x2 = t4
+		y1 = t1
+		y2 = t2
+		xSize = x2 - x1
+		ySize = y2 - y1
+		power += 2
+	}
+
+	if choice == 4 || choice == 1 {
+		if xSize < 3 || ySize < 3 {
+			for y := y1; y < y2; y++ {
+				for x := x1; x < x2; x++ {
+					//level.GetTileAt(x, y).TileIndex = 0
+				}
+			}
+
+			return
+		}
+
+		//make outside walls
+		for x := x1 + 1; x <= x2-1; x++ {
+			level.GetTileAt(x, y1+1).TileIndex = 0
+			level.GetTileAt(x, y2-1).TileIndex = 0
+		}
+
+		for y := y1 + 1; y < y2-1; y++ {
+			level.GetTileAt(x1+1, y).TileIndex = 6
+			level.GetTileAt(x2-1, y).TileIndex = 6
+		}
+
+		//Make door
+		y := getRandom(0, ySize-3) + y1 + 1
+		if getRandom(0, 2) == 0 {
+			level.GetTileAt(x1+1, y).TileIndex = 121
+		} else {
+			level.GetTileAt(x2-1, y).TileIndex = 121
+		}
+
+		level.buildRecursiveRoom(x1+2, y1+2, x2-2, y2-2, power+3)
+	}
+
+	if choice == 2 {
+		if xSize < 3 {
+			for y := y1; y < y2; y++ {
+				for x := x1; x < x2; x++ {
+					//level.GetTileAt(x, y).TileIndex = 6
+				}
+			}
+
+			return
+		}
+
+		t1 := getRandom(0, xSize-2) + x1 + 1
+		level.buildRecursiveRoom(x1, y1, t1, y2, power-2)
+		level.buildRecursiveRoom(t1+1, y1, x2, y2, power-2)
+	}
+
+	if choice == 3 {
+		if ySize < 3 {
+			for y := y1; y < y2; y++ {
+				for x := x1; x < x2; x++ {
+					//level.GetTileAt(x, y).TileIndex = 6
+				}
+			}
+
+			return
+		}
+
+		t1 := getRandom(0, ySize-2) + y1 + 1
+		level.buildRecursiveRoom(x1, y1, x2, t1, power-2)
+		level.buildRecursiveRoom(x1, t1+1, x2, y2, power-2)
+	}
 }
