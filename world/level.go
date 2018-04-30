@@ -93,7 +93,7 @@ func NewOverworldSection(width int, height int) (level *Level) {
 	}
 
 	//create a town
-	level.buildRecursiveRoom(0, 0, 20, 20, 9)
+	level.buildRecursiveRoom(5, 5, 55, 55, 3)
 
 	return
 }
@@ -329,7 +329,7 @@ func (level *Level) buildRecursiveRoom(x1 int, y1 int, x2 int, y2 int, power int
 	}
 
 	choice := 0
-	if power > 3 && xSize > 12 && ySize > 12 {
+	if power < 3 && xSize > 12 && ySize > 12 {
 		choice = 1
 	} else {
 		if power < 10 {
@@ -342,7 +342,7 @@ func (level *Level) buildRecursiveRoom(x1 int, y1 int, x2 int, y2 int, power int
 		}
 	}
 
-	if choice == 1 {
+	if choice == 7 {
 		//Outer walls
 		for x := x1; x <= x2; x++ {
 			level.GetTileAt(x, y1).TileIndex = 0
@@ -389,10 +389,10 @@ func (level *Level) buildRecursiveRoom(x1 int, y1 int, x2 int, y2 int, power int
 	}
 
 	if choice == 4 || choice == 1 {
-		if xSize < 3 || ySize < 3 {
+		if xSize < 4 || ySize < 4 {
 			for y := y1; y < y2; y++ {
 				for x := x1; x < x2; x++ {
-					//level.GetTileAt(x, y).TileIndex = 0
+					level.GetTileAt(x, y).TileIndex = 165
 				}
 			}
 
@@ -411,21 +411,21 @@ func (level *Level) buildRecursiveRoom(x1 int, y1 int, x2 int, y2 int, power int
 		}
 
 		//Make door
-		y := getRandom(0, ySize-3) + y1 + 1
+		y := getRandom(0, ySize-3) + y1 + 2
 		if getRandom(0, 2) == 0 {
-			level.GetTileAt(x1+1, y).TileIndex = 121
+			level.GetTileAt(x1+1, y).TileIndex = 123
 		} else {
-			level.GetTileAt(x2-1, y).TileIndex = 121
+			level.GetTileAt(x2-1, y).TileIndex = 123
 		}
 
 		level.buildRecursiveRoom(x1+2, y1+2, x2-2, y2-2, power+3)
 	}
 
 	if choice == 2 {
-		if xSize < 3 {
+		if xSize < 4 {
 			for y := y1; y < y2; y++ {
 				for x := x1; x < x2; x++ {
-					//level.GetTileAt(x, y).TileIndex = 6
+					level.GetTileAt(x, y).TileIndex = 165
 				}
 			}
 
@@ -438,10 +438,10 @@ func (level *Level) buildRecursiveRoom(x1 int, y1 int, x2 int, y2 int, power int
 	}
 
 	if choice == 3 {
-		if ySize < 3 {
+		if ySize < 4 {
 			for y := y1; y < y2; y++ {
 				for x := x1; x < x2; x++ {
-					//level.GetTileAt(x, y).TileIndex = 6
+					level.GetTileAt(x, y).TileIndex = 165
 				}
 			}
 
